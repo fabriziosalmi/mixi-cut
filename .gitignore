@@ -1,0 +1,15 @@
+# WAV files in root (generated output)
+/*.wav
+
+# Keep wav/ folder tracked (distributed files)
+!wav/
+!wav/*.wav
+
+__pycache__/
+*.pyc
+.DS_Store
+*.egg-info/
+dist/
+build/
+.venv/
+venv/

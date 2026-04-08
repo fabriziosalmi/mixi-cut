@@ -1,0 +1,176 @@
+{
+  "timestamp": "20260409_000602",
+  "commit": "334def0",
+  "findings": [
+    {
+      "category": "noise",
+      "name": "breaking_point",
+      "value": -24,
+      "unit": "dB SNR",
+      "verdict": "strong",
+      "detail": "Survives SNR=-24dB"
+    },
+    {
+      "category": "wow",
+      "name": "max_tolerable",
+      "value": 5.0,
+      "unit": "% wow",
+      "verdict": "strong",
+      "detail": "Breaks at \u00b15.0% wow"
+    },
+    {
+      "category": "dust",
+      "name": "max_density",
+      "value": 1000,
+      "unit": "scratches/sec",
+      "verdict": "strong",
+      "detail": "Jitter threshold at 1000/sec"
+    },
+    {
+      "category": "speed",
+      "name": "min_speed",
+      "value": 0.02,
+      "unit": "x",
+      "verdict": "strong",
+      "detail": "Min: 0.02x"
+    },
+    {
+      "category": "speed",
+      "name": "max_speed",
+      "value": 2.0,
+      "unit": "x",
+      "verdict": "acceptable",
+      "detail": "Max: 2.00x"
+    },
+    {
+      "category": "transition",
+      "name": "worst_settle",
+      "value": 487.6190476190476,
+      "unit": "ms",
+      "verdict": "weak",
+      "detail": "Worst transition: 488ms"
+    },
+    {
+      "category": "hum",
+      "name": "max_level",
+      "value": 6,
+      "unit": "dB",
+      "verdict": "strong",
+      "detail": "Immune to hum at +6dB"
+    },
+    {
+      "category": "clipping",
+      "name": "survives_overdrive",
+      "value": true,
+      "unit": "",
+      "verdict": "strong",
+      "detail": "Survives 1.2x overdrive with hard clip"
+    },
+    {
+      "category": "quantization",
+      "name": "min_bits",
+      "value": 4,
+      "unit": "bit",
+      "verdict": "strong",
+      "detail": "Min ADC resolution: 4-bit"
+    },
+    {
+      "category": "xtalk",
+      "name": "max_bleed",
+      "value": 70,
+      "unit": "% bleed",
+      "verdict": "strong",
+      "detail": "Survives 70% bleed"
+    },
+    {
+      "category": "multi_skip",
+      "name": "recovery",
+      "value": "OK",
+      "unit": "",
+      "verdict": "strong",
+      "detail": "Recovers from 10 rapid skips"
+    },
+    {
+      "category": "edm",
+      "name": "worst_drift",
+      "value": 1.1602663460514862,
+      "unit": "ms",
+      "verdict": "strong",
+      "detail": "Worst beat drift: 1.16ms over 64 bars"
+    },
+    {
+      "category": "combined",
+      "name": "scenarios_passed",
+      "value": 6,
+      "unit": "of 6",
+      "verdict": "strong",
+      "detail": "6/6 scenarios survived"
+    },
+    {
+      "category": "frequency",
+      "name": "optimal",
+      "value": 5000,
+      "unit": "Hz",
+      "verdict": "strong",
+      "detail": "Best: 5000Hz (score=0.934), current 3kHz (0.932)"
+    }
+  ],
+  "freq_sweep": [
+    {
+      "freq": 1000,
+      "noise": 0.9993081378325606,
+      "riaa": 0.9999292797088408,
+      "slow": 0.7700619911232673,
+      "score": 0.9307516934764706
+    },
+    {
+      "freq": 1500,
+      "noise": 0.9993512460683668,
+      "riaa": 0.9999261920074408,
+      "slow": 0.771472930183578,
+      "score": 0.931188982381606
+    },
+    {
+      "freq": 2000,
+      "noise": 0.9993240932775254,
+      "riaa": 0.999930347596359,
+      "slow": 0.7728741786966036,
+      "score": 0.9316013079148405
+    },
+    {
+      "freq": 2500,
+      "noise": 0.9992102599351355,
+      "riaa": 0.9999201752177842,
+      "slow": 0.7742657444995383,
+      "score": 0.9319753756533833
+    },
+    {
+      "freq": 3000,
+      "noise": 0.9991861582671668,
+      "riaa": 0.999915550405887,
+      "slow": 0.7756478608336352,
+      "score": 0.9323799562856593
+    },
+    {
+      "freq": 3500,
+      "noise": 0.9991019615259922,
+      "riaa": 0.9999066066538891,
+      "slow": 0.777020480191251,
+      "score": 0.9327591429203337
+    },
+    {
+      "freq": 4000,
+      "noise": 0.9990967962997677,
+      "riaa": 0.9999031842455784,
+      "slow": 0.7783834473763385,
+      "score": 0.9331650274037726
+    },
+    {
+      "freq": 5000,
+      "noise": 0.9991075216690964,
+      "riaa": 0.9998933648863577,
+      "slow": 0.7810817333645172,
+      "score": 0.933974830303764
+    }
+  ]
+}
