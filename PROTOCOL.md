@@ -1,10 +1,10 @@
-# MIXI-CUT Protocol Specification v3
+# MIXI-CUT Protocol Specification v0.1.0
 
 ## Overview
 
 MIXI-CUT is an open-source timecode protocol for DVS (Digital Vinyl System) vinyl, designed from scratch for artisanal lathe cutting. Not reverse-engineered from Serato or Traktor.
 
-**v3** is optimized for EDM (100-200 BPM) with DJ resilience features: vinyl brake detection, tonearm bounce recovery, PLL integral drain, and low-speed dead zone. Validated with 1000+ Monte Carlo tonearm bounce simulations.
+**v0.1.0** is optimized for EDM (100-200 BPM) with DJ resilience features: vinyl brake detection, tonearm bounce recovery, PLL integral drain, and low-speed dead zone. Validated with 1000+ Monte Carlo tonearm bounce simulations.
 
 ## Signal Design
 
