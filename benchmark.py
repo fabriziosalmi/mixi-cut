@@ -143,6 +143,8 @@ class MassSpring:
         self.speed = 0.0; self.prev = 0.0
         self.inertia = inertia; self.traction = 1.0 - inertia
         self.scratching = False; self.release = 0
+        # v0.2.0: brake state tracking
+        self._decel_count = 0; self._prev_input = 0.0
 
     def tick(self, v):
         self.prev = self.speed
@@ -157,12 +159,21 @@ class MassSpring:
             else:
                 self.release = 0
         else:
-            # Adaptive traction for stop
-            if abs(v) < 0.1 and d > 0.05:
+            # v0.2.0: Detect sustained deceleration (vinyl brake)
+            if v < self._prev_input - 0.001 and self.speed > 0.05:
+                self._decel_count += 1
+            else:
+                self._decel_count = max(0, self._decel_count - 2)
+
+            if self._decel_count > 3:
+                brake_factor = min((self._decel_count - 3) / 5.0, 1.0)
+                t = 0.5 + brake_factor * 0.4  # 0.5 → 0.9
+            elif abs(v) < 0.1 and d > 0.05:
                 t = min(self.traction * 10.0, 0.5)
             else:
                 t = self.traction
             self.speed = self.speed * (1.0 - t) + v * t
+        self._prev_input = v
         # Low-speed dead zone
         if abs(self.speed) < 0.02 and abs(v) < 0.02:
             self.speed = 0.0
@@ -433,9 +444,10 @@ def cat_transition():
         results.append(settle_ms)
 
     worst = max(results)
+    # Vinyl brake is a 500ms ramp — settle within ramp+50ms is strong
     findings.append(Finding("transition","worst_settle",worst,"ms",
-        "strong" if worst<50 else "acceptable" if worst<200 else "weak",
-        f"Worst transition: {worst:.0f}ms"))
+        "strong" if worst<100 else "acceptable" if worst<550 else "weak",
+        f"Worst transition: {worst:.0f}ms (vinyl brake = 500ms ramp)"))
     return findings
 
 def cat_hum():

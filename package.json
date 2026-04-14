@@ -1,0 +1,19 @@
+{
+  "name": "mixi-cut",
+  "version": "0.3.0",
+  "private": true,
+  "description": "Open-source DVS timecode protocol for vinyl lathe cutting",
+  "scripts": {
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fabriziosalmi/mixi-cut.git"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "vitepress": "^1.6.4"
+  }
+}

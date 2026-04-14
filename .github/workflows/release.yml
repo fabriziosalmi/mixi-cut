@@ -1,0 +1,91 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -e ".[all]"
+      - run: pytest tests/ -v --tb=short
+      - run: mixi-cut generate --duration 10 --output /tmp/pre_release.wav
+      - run: mixi-cut verify /tmp/pre_release.wav --strict
+
+  build-artifacts:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -e ".[all]"
+
+      - name: Generate release WAVs
+        run: |
+          for dur in 60 240 480 600 900; do
+            mixi-cut generate --duration $dur --loop --output mixi_timecode_${dur}s.wav
+            echo "Generated ${dur}s WAV"
+          done
+          mixi-cut generate --duration 600 --riaa --loop --output mixi_timecode_600s_riaa.wav
+
+      - name: Build C decoder
+        run: |
+          cd decoder_c
+          cc -std=c99 -O2 -Iinclude -o test_decoder test/test_decoder.c src/mixi_decoder.c -lm
+          ./test_decoder
+
+      - name: Build Python package
+        run: |
+          pip install build
+          python -m build
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-files
+          path: |
+            mixi_timecode_*.wav
+            dist/*
+
+  release:
+    needs: build-artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-files
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            mixi_timecode_*.wav
+            dist/*
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+
+  publish-pypi:
+    needs: release
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-files
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist/

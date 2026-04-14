@@ -1,0 +1,70 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mixi-cut"
+version = "0.3.0"
+description = "Open-source DVS timecode generator for vinyl lathe cutting"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.9"
+authors = [
+    { name = "Fabrizio Salmi", email = "fabrizio.salmi@gmail.com" },
+]
+keywords = ["dvs", "vinyl", "timecode", "dj", "lathe-cut", "turntable"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Multimedia :: Sound/Audio",
+    "Topic :: Multimedia :: Sound/Audio :: Analysis",
+]
+dependencies = [
+    "numpy>=1.24",
+    "soundfile>=0.12",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "ruff>=0.4",
+]
+bench = [
+    "fpdf2>=2.7",
+    "matplotlib>=3.7",
+]
+all = [
+    "mixi-cut[dev,bench]",
+]
+
+[project.scripts]
+mixi-cut = "mixi_cut.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/fabriziosalmi/mixi-cut"
+Documentation = "https://github.com/fabriziosalmi/mixi-cut#readme"
+Repository = "https://github.com/fabriziosalmi/mixi-cut"
+Issues = "https://github.com/fabriziosalmi/mixi-cut/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mixi_cut"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"
+
+[tool.ruff]
+target-version = "py310"
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B"]
+ignore = ["E501", "E402"]

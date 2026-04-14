@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIXI-CUT — Live Timecode Decoder</title>
+    <meta name="description" content="Open-source DVS timecode decoder — drag a WAV file to decode position, speed, and lock quality in real-time.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">◉</span>
+                <h1>MIXI-CUT</h1>
+                <span class="version">v0.2.0</span>
+            </div>
+            <p class="subtitle">Open-Source DVS Timecode Decoder</p>
+        </header>
+
+        <!-- Drop zone -->
+        <div id="drop-zone" class="drop-zone">
+            <div class="drop-content">
+                <div class="drop-icon">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+                        <path d="M8 12l4 4 4-4M12 8v8"/>
+                    </svg>
+                </div>
+                <h2>Drop WAV File Here</h2>
+                <p>Or click to select a MIXI-CUT timecode file</p>
+                <input type="file" id="file-input" accept=".wav" hidden>
+            </div>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="dashboard" class="dashboard hidden">
+            <!-- File info -->
+            <div class="file-info" id="file-info"></div>
+
+            <!-- Main gauges -->
+            <div class="gauges">
+                <div class="gauge-card">
+                    <div class="gauge-label">SPEED</div>
+                    <div class="gauge-value" id="gauge-speed">0.000<span class="gauge-unit">x</span></div>
+                    <div class="gauge-bar-container">
+                        <div class="gauge-bar speed-bar" id="speed-bar"></div>
+                    </div>
+                </div>
+                <div class="gauge-card">
+                    <div class="gauge-label">LOCK</div>
+                    <div class="gauge-value" id="gauge-lock">0.000</div>
+                    <div class="gauge-bar-container">
+                        <div class="gauge-bar lock-bar" id="lock-bar"></div>
+                    </div>
+                </div>
+                <div class="gauge-card">
+                    <div class="gauge-label">POSITION</div>
+                    <div class="gauge-value" id="gauge-position">0.00<span class="gauge-unit">s</span></div>
+                    <div class="gauge-bar-container">
+                        <div class="gauge-bar pos-bar" id="pos-bar"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Waveform / Speed graph -->
+            <div class="graph-section">
+                <div class="graph-tabs">
+                    <button class="tab active" data-tab="speed">Speed</button>
+                    <button class="tab" data-tab="lock">Lock</button>
+                    <button class="tab" data-tab="waveform">Waveform</button>
+                </div>
+                <canvas id="graph-canvas" width="1200" height="300"></canvas>
+            </div>
+
+            <!-- Controls -->
+            <div class="controls">
+                <button id="btn-play" class="btn btn-primary" disabled>
+                    <span class="btn-icon">▶</span> Play
+                </button>
+                <button id="btn-stop" class="btn btn-secondary" disabled>
+                    <span class="btn-icon">■</span> Stop
+                </button>
+                <button id="btn-reset" class="btn btn-ghost">
+                    <span class="btn-icon">↻</span> New File
+                </button>
+                <div class="playback-time" id="playback-time">0:00 / 0:00</div>
+            </div>
+
+            <!-- Protocol info -->
+            <div class="protocol-info">
+                <div class="info-item">
+                    <span class="info-label">Carrier</span>
+                    <span class="info-value">3000 Hz</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Quadrature</span>
+                    <span class="info-value">L=sin R=cos</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Position</span>
+                    <span class="info-value">24-bit + RS(4)</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Pipeline</span>
+                    <span class="info-value">BP→PLL→MS</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <a href="https://github.com/fabriziosalmi/mixi-cut" target="_blank">GitHub</a>
+            <span>•</span>
+            <a href="https://github.com/fabriziosalmi/mixi-cut/blob/main/PROTOCOL.md" target="_blank">Protocol</a>
+            <span>•</span>
+            <span>MIT License</span>
+        </footer>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

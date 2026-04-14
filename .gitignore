@@ -5,6 +5,11 @@
 !wav/
 !wav/*.wav
 
+PLAN.md
+BENCHMARK_REPORT.pdf
+PROTOCOL.pdf
+.vitepress/
+
 __pycache__/
 *.pyc
 .DS_Store
@@ -13,3 +18,21 @@ dist/
 build/
 .venv/
 venv/
+.pytest_cache/
+htmlcov/
+.coverage
+.ruff_cache/
+
+# C decoder build artifacts
+decoder_c/build/
+decoder_c/build_test
+decoder_c/*.o
+
+# Rust build artifacts
+decoder_rust/target/
+decoder_rust/Cargo.lock
+
+# Node / VitePress
+node_modules/
+docs/.vitepress/cache/
+docs/.vitepress/dist/

@@ -1,0 +1,28 @@
+[package]
+name = "mixi-decoder"
+version = "0.2.0"
+edition = "2021"
+description = "MIXI-CUT DVS timecode decoder — Bandpass→PLL→MassSpring pipeline"
+license = "MIT"
+repository = "https://github.com/fabriziosalmi/mixi-cut"
+keywords = ["dvs", "vinyl", "timecode", "dj", "decoder"]
+categories = ["multimedia::audio"]
+
+[features]
+default = []
+wasm = ["wasm-bindgen"]
+
+[dependencies]
+wasm-bindgen = { version = "0.2", optional = true }
+hound = "3.5"
+
+[dev-dependencies]
+
+[[bin]]
+name = "mixi-decode"
+path = "src/bin/decode.rs"
+required-features = []
+
+[profile.release]
+opt-level = 3
+lto = true
