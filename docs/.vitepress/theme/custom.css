@@ -1,0 +1,221 @@
+/* MIXI-CUT VitePress Theme — Apple-style, no emoji, native fonts */
+
+:root {
+  --vp-font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  --vp-font-family-mono: 'JetBrains Mono', 'SF Mono', SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Apple-inspired neutral palette */
+  --vp-c-brand-1: #0071e3;
+  --vp-c-brand-2: #0077ed;
+  --vp-c-brand-3: #006edb;
+  --vp-c-brand-soft: rgba(0, 113, 227, 0.12);
+
+  --vp-c-tip-1: #0071e3;
+  --vp-c-tip-soft: rgba(0, 113, 227, 0.08);
+
+  /* Typography */
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: linear-gradient(135deg, #1d1d1f 0%, #424245 50%, #6e6e73 100%);
+  --vp-home-hero-image-background-image: none;
+  --vp-home-hero-image-filter: none;
+}
+
+.dark {
+  --vp-c-brand-1: #2997ff;
+  --vp-c-brand-2: #3ba0ff;
+  --vp-c-brand-3: #60b4ff;
+  --vp-c-brand-soft: rgba(41, 151, 255, 0.12);
+
+  --vp-home-hero-name-background: linear-gradient(135deg, #f5f5f7 0%, #a1a1a6 50%, #6e6e73 100%);
+
+  --vp-c-bg: #0a0a0a;
+  --vp-c-bg-soft: #141414;
+  --vp-c-bg-mute: #1c1c1e;
+  --vp-c-bg-alt: #0e0e0e;
+
+  --vp-c-text-1: #f5f5f7;
+  --vp-c-text-2: #a1a1a6;
+  --vp-c-text-3: #6e6e73;
+
+  --vp-c-divider: rgba(255, 255, 255, 0.08);
+  --vp-c-gutter: #1c1c1e;
+}
+
+/* Hero section — Apple product page feel */
+.VPHero {
+  padding-bottom: 80px !important;
+}
+
+.VPHero .name {
+  font-weight: 700 !important;
+  letter-spacing: -0.03em !important;
+  font-size: 56px !important;
+  line-height: 1.1 !important;
+}
+
+@media (min-width: 960px) {
+  .VPHero .name {
+    font-size: 76px !important;
+  }
+}
+
+.VPHero .tagline {
+  font-size: 20px !important;
+  font-weight: 400 !important;
+  color: var(--vp-c-text-2) !important;
+  letter-spacing: -0.01em !important;
+  max-width: 560px !important;
+}
+
+.VPHero .text {
+  font-size: 18px !important;
+  line-height: 1.6 !important;
+  color: var(--vp-c-text-2) !important;
+}
+
+/* Action buttons — pill shape like Apple */
+.VPButton.medium {
+  border-radius: 980px !important;
+  padding: 10px 22px !important;
+  font-weight: 500 !important;
+  font-size: 15px !important;
+  letter-spacing: -0.01em !important;
+  transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1) !important;
+}
+
+.VPButton.brand {
+  background: var(--vp-c-brand-1) !important;
+  border-color: var(--vp-c-brand-1) !important;
+}
+
+.VPButton.brand:hover {
+  background: var(--vp-c-brand-2) !important;
+  transform: scale(1.02);
+}
+
+.VPButton.alt {
+  background: transparent !important;
+  border: 1px solid var(--vp-c-divider) !important;
+  color: var(--vp-c-text-1) !important;
+}
+
+.VPButton.alt:hover {
+  border-color: var(--vp-c-text-3) !important;
+  transform: scale(1.02);
+}
+
+/* Feature cards — frosted glass */
+.VPFeature {
+  border-radius: 16px !important;
+  border: 1px solid var(--vp-c-divider) !important;
+  transition: all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1) !important;
+  backdrop-filter: blur(20px) !important;
+}
+
+.dark .VPFeature {
+  background: rgba(28, 28, 30, 0.6) !important;
+}
+
+.VPFeature:hover {
+  transform: translateY(-2px);
+  border-color: var(--vp-c-brand-soft) !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.dark .VPFeature:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+
+.VPFeature .title {
+  font-weight: 600 !important;
+  font-size: 16px !important;
+  letter-spacing: -0.01em !important;
+}
+
+.VPFeature .details {
+  font-size: 14px !important;
+  color: var(--vp-c-text-2) !important;
+  line-height: 1.6 !important;
+}
+
+/* Sidebar — clean Apple style */
+.VPSidebar {
+  border-right: 1px solid var(--vp-c-divider) !important;
+}
+
+.VPSidebarItem .text {
+  font-size: 14px !important;
+  font-weight: 450 !important;
+}
+
+/* Content typography */
+.vp-doc h1 {
+  font-weight: 700 !important;
+  letter-spacing: -0.03em !important;
+  font-size: 32px !important;
+}
+
+.vp-doc h2 {
+  font-weight: 600 !important;
+  letter-spacing: -0.02em !important;
+  border-top: 1px solid var(--vp-c-divider) !important;
+  padding-top: 24px !important;
+  margin-top: 40px !important;
+}
+
+.vp-doc p {
+  line-height: 1.7 !important;
+}
+
+/* Code blocks — dark, sharp */
+.vp-doc div[class*='language-'] {
+  border-radius: 12px !important;
+  border: 1px solid var(--vp-c-divider) !important;
+}
+
+.dark .vp-doc div[class*='language-'] {
+  background: #141414 !important;
+}
+
+/* Tables — clean borders */
+.vp-doc table {
+  border-radius: 8px !important;
+  overflow: hidden !important;
+}
+
+.vp-doc th {
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+}
+
+/* Nav — frosted glass */
+.VPNav {
+  backdrop-filter: saturate(180%) blur(20px) !important;
+}
+
+.dark .VPNav {
+  background: rgba(10, 10, 10, 0.8) !important;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--vp-c-divider);
+  border-radius: 3px;
+}
+
+/* Smooth transitions everywhere */
+* {
+  transition-property: color, background-color, border-color, box-shadow, opacity;
+  transition-duration: 0.2s;
+  transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+}

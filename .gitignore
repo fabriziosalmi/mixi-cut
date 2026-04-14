@@ -8,7 +8,7 @@
 PLAN.md
 BENCHMARK_REPORT.pdf
 PROTOCOL.pdf
-.vitepress/
+/.vitepress/
 
 __pycache__/
 *.pyc
