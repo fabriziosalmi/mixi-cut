@@ -51,6 +51,27 @@ features:
 /* Kill VitePress default hero image blob — our vinyl has its own halo */
 .VPHero .image-bg { display: none !important; }
 
+/* Pull the vinyl up-and-left so it fills the void next to the title
+   instead of sitting low-right. Only applies on the 2-column layout
+   (>=960px); below that VitePress stacks vertically and the image
+   is already where it should be. */
+@media (min-width: 960px) {
+  .VPHero .image {
+    transform: translate(-110px, -130px);
+  }
+}
+@media (min-width: 1280px) {
+  .VPHero .image {
+    transform: translate(-200px, -210px);
+  }
+}
+/* Extra-wide: nudge a touch more without running into the title column */
+@media (min-width: 1600px) {
+  .VPHero .image {
+    transform: translate(-260px, -240px);
+  }
+}
+
 /* Hero vinyl — spins like a 33⅓ RPM disc (slowed 3× for taste),
    pauses + pops on hover, respects reduced-motion.
    Halo is pure black so it blends into the image's black rim. */
