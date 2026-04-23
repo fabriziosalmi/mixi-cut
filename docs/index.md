@@ -51,24 +51,23 @@ features:
 /* Kill VitePress default hero image blob — our vinyl has its own halo */
 .VPHero .image-bg { display: none !important; }
 
-/* Pull the vinyl up-and-left so it fills the void next to the title
-   instead of sitting low-right. Only applies on the 2-column layout
-   (>=960px); below that VitePress stacks vertically and the image
-   is already where it should be. */
+/* Pull the vinyl slightly up-and-left so it aligns with the title row
+   instead of sitting low-right. Deliberately gentle — overshoot lets
+   the disc clip against the navbar. Only applies on the 2-column
+   layout (>=960px); below that VitePress stacks vertically. */
 @media (min-width: 960px) {
   .VPHero .image {
-    transform: translate(-110px, -130px);
+    transform: translate(-40px, -40px);
   }
 }
 @media (min-width: 1280px) {
   .VPHero .image {
-    transform: translate(-200px, -210px);
+    transform: translate(-90px, -70px);
   }
 }
-/* Extra-wide: nudge a touch more without running into the title column */
 @media (min-width: 1600px) {
   .VPHero .image {
-    transform: translate(-260px, -240px);
+    transform: translate(-130px, -90px);
   }
 }
 
