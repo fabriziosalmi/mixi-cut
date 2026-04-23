@@ -71,9 +71,9 @@ features:
   }
 }
 
-/* Hero vinyl — fully static. Halo is pure black so it reads as a
-   continuation of the image's own black rim. No hover movement,
-   no click shrink: the user asked for a still disc. */
+/* Hero vinyl — fully static, 2× visual size, grows right-only.
+   Halo is pure black so it reads as a continuation of the image's
+   own black rim. */
 .VPHero .VPImage,
 .VPHero .image-src {
   border-radius: 50%;
@@ -81,6 +81,24 @@ features:
     0 0 0 2px #000,
     0 0 60px 18px rgba(0, 0, 0, 0.88),
     0 30px 80px rgba(0, 0, 0, 0.55);
+}
+
+/* Let the scaled image overflow its layout box without clipping. */
+.VPHero .image,
+.VPHero .image-container {
+  overflow: visible !important;
+}
+
+/* 2× scale, anchored to the left edge so the image grows rightward
+   only (left side is already at its limit per user note). Applied
+   only on >=960px — mobile keeps native size to avoid viewport
+   overflow on narrow screens. */
+@media (min-width: 960px) {
+  .VPHero .VPImage,
+  .VPHero .image-src {
+    transform: scale(2);
+    transform-origin: left center;
+  }
 }
 
 /* Stats section */
