@@ -51,28 +51,29 @@ features:
 /* Kill VitePress default hero image blob — our vinyl has its own halo */
 .VPHero .image-bg { display: none !important; }
 
-/* Pull the vinyl slightly up-and-left so it aligns with the title row
-   instead of sitting low-right. Deliberately gentle — overshoot lets
-   the disc clip against the navbar. Only applies on the 2-column
-   layout (>=960px); below that VitePress stacks vertically. */
+/* Nudge the vinyl slightly up-and-left so it sits inside the hero
+   column rather than at the far bottom-right. Very gentle — only on
+   the 2-column layout (>=960px); below that VitePress stacks
+   vertically and the image is already where it should be. */
 @media (min-width: 960px) {
   .VPHero .image {
-    transform: translate(-40px, -40px);
+    transform: translate(-20px, -20px);
   }
 }
 @media (min-width: 1280px) {
   .VPHero .image {
-    transform: translate(-90px, -70px);
+    transform: translate(-55px, -40px);
   }
 }
 @media (min-width: 1600px) {
   .VPHero .image {
-    transform: translate(-130px, -90px);
+    transform: translate(-90px, -60px);
   }
 }
 
-/* Hero vinyl — static disc, pops on hover.
-   Halo is pure black so it blends into the image's black rim. */
+/* Hero vinyl — fully static. Halo is pure black so it reads as a
+   continuation of the image's own black rim. No hover movement,
+   no click shrink: the user asked for a still disc. */
 .VPHero .VPImage,
 .VPHero .image-src {
   border-radius: 50%;
@@ -80,33 +81,6 @@ features:
     0 0 0 2px #000,
     0 0 60px 18px rgba(0, 0, 0, 0.88),
     0 30px 80px rgba(0, 0, 0, 0.55);
-  transform-origin: 50% 50%;
-  transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.2),
-              box-shadow 0.4s ease;
-  cursor: grab;
-}
-
-.VPHero .VPImage:hover,
-.VPHero .image-src:hover {
-  transform: scale(1.06) rotate(-6deg);
-  box-shadow:
-    0 0 0 2px #000,
-    0 0 80px 28px rgba(0, 0, 0, 0.95),
-    0 36px 100px rgba(0, 0, 0, 0.7);
-}
-
-.VPHero .VPImage:active,
-.VPHero .image-src:active {
-  cursor: grabbing;
-  transform: scale(0.98) rotate(2deg);
-  transition-duration: 0.08s;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .VPHero .VPImage:hover,
-  .VPHero .image-src:hover {
-    transform: none;
-  }
 }
 
 /* Stats section */
