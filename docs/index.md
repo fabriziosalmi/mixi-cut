@@ -72,8 +72,7 @@ features:
   }
 }
 
-/* Hero vinyl — spins like a 33⅓ RPM disc (slowed 3× for taste),
-   pauses + pops on hover, respects reduced-motion.
+/* Hero vinyl — static disc, pops on hover.
    Halo is pure black so it blends into the image's black rim. */
 .VPHero .VPImage,
 .VPHero .image-src {
@@ -82,9 +81,7 @@ features:
     0 0 0 2px #000,
     0 0 60px 18px rgba(0, 0, 0, 0.88),
     0 30px 80px rgba(0, 0, 0, 0.55);
-  animation: mixicut-spin 5.4s linear infinite;
   transform-origin: 50% 50%;
-  will-change: transform;
   transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.2),
               box-shadow 0.4s ease;
   cursor: grab;
@@ -92,7 +89,6 @@ features:
 
 .VPHero .VPImage:hover,
 .VPHero .image-src:hover {
-  animation-play-state: paused;
   transform: scale(1.06) rotate(-6deg);
   box-shadow:
     0 0 0 2px #000,
@@ -107,17 +103,7 @@ features:
   transition-duration: 0.08s;
 }
 
-@keyframes mixicut-spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
-
-/* Accessibility: no spin for users who opt out */
 @media (prefers-reduced-motion: reduce) {
-  .VPHero .VPImage,
-  .VPHero .image-src {
-    animation: none;
-  }
   .VPHero .VPImage:hover,
   .VPHero .image-src:hover {
     transform: none;
