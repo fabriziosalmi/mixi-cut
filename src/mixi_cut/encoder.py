@@ -242,9 +242,13 @@ def apply_position_encoding(
     while cycle_cursor + cycles_per_frame <= total_cycles:
         position_sec = cycle_cursor / freq
 
-        # Multi-rate: double frame rate on inner groove
+        # Multi-rate: double frame rate on inner groove.
+        # Snap to the POSITION_CYCLE_INTERVAL grid so every frame lays bits
+        # on the same 50-cycle lattice — keeps sync/CRC/RS decodable regardless
+        # of which frame laid the bit down.
         if position_sec > MULTI_RATE_THRESHOLD_SEC:
-            current_interval = cycles_per_frame // MULTI_RATE_DENSE_FACTOR
+            dense = cycles_per_frame // MULTI_RATE_DENSE_FACTOR
+            current_interval = (dense // POSITION_CYCLE_INTERVAL) * POSITION_CYCLE_INTERVAL
         else:
             current_interval = cycles_per_frame
 

@@ -7,6 +7,7 @@ file ready for vinyl lathe cutting.
 import numpy as np
 import soundfile as sf
 
+from mixi_cut import __version__
 from mixi_cut.carrier import apply_fades, apply_riaa_iir
 from mixi_cut.encoder import apply_position_encoding
 from mixi_cut.protocol import (
@@ -60,7 +61,7 @@ def generate_timecode(
     total_samples = lead_in + signal_samples + lead_out
 
     if verbose:
-        print("MIXI-CUT v0.3.0 timecode generator")
+        print(f"MIXI-CUT v{__version__} timecode generator")
         print(f"  Duration:    {duration}s ({duration/60:.1f} min) + {LEAD_IN_SECONDS}s lead-in + {LEAD_OUT_SECONDS}s lead-out")
         print(f"  Frequency:   {freq} Hz (stereo quadrature)")
         print(f"  Samples:     {total_samples:,} ({signal_samples:,} signal)")

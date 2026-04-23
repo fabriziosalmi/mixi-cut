@@ -137,11 +137,14 @@ def rs_check(codeword: list[int] | bytes, nsym: int = 4) -> bool:
 def crc16(data: list[int] | bytes, poly: int = 0x8005, init: int = 0xFFFF) -> int:
     """Compute CRC-16 over data bytes.
 
-    Uses bit-by-bit computation (no table needed — portable).
+    Bit-by-bit, MSB-first, non-reflected, zero final XOR. The defaults
+    (poly=0x8005, init=0xFFFF) are MIXI-CUT's own configuration: they share
+    the ARC polynomial but differ from every named CRC-16 variant. Encoder
+    and decoder only need to agree; there is no third-party interop goal.
 
     Args:
         data: Input data bytes
-        poly: CRC polynomial (default: CRC-16/ARC 0x8005)
+        poly: CRC polynomial
         init: Initial CRC value
 
     Returns:

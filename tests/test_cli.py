@@ -7,6 +7,8 @@ import os
 import subprocess
 import sys
 
+from mixi_cut import __version__
+
 
 def run_cli(*args):
     """Run mixi-cut CLI and return (returncode, stdout, stderr)."""
@@ -23,7 +25,7 @@ class TestCLIGenerate:
         rc, out, err = run_cli("generate", "--duration", "3", "-o", output)
         assert rc == 0
         assert os.path.exists(output)
-        assert "MIXI-CUT v0.3.0" in out
+        assert f"MIXI-CUT v{__version__}" in out
 
     def test_generate_preset(self, tmp_path):
         output = str(tmp_path / "preset.wav")
@@ -80,7 +82,7 @@ class TestCLIInfo:
     def test_info_shows_version(self):
         rc, out, err = run_cli("info")
         assert rc == 0
-        assert "0.3.0" in out
+        assert __version__ in out
         assert "3000" in out  # carrier freq
 
 

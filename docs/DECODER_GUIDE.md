@@ -127,7 +127,11 @@ Where `traction` varies by context:
 | **Vinyl brake** | 0.5–0.9 (ramp) | Sustained deceleration > 3 blocks |
 | **Dead zone** | → 0.0 | `|speed| < 0.02` and `|input| < 0.02` |
 
-### Brake detection (v0.2.0)
+### Brake detection (v0.2)
+
+> v0.3.1 replaces the linear ramp below with a 3-regime state machine
+> (DECEL → SNAP → RELEASE) in the Python reference decoder. The C and
+> Rust ports still ship the v0.2 linear ramp documented here.
 
 ```python
 # Count consecutive deceleration blocks
@@ -182,14 +186,27 @@ def process_block(left_128, right_128):
 
 ## Position Decoding
 
-### Frame format
+> **Status**: the reference decoders in this repo (Python, C, Rust, JS)
+> expose a `position` output that is the integral of the PLL frequency —
+> i.e. a cumulative time counter, not the absolute position decoded from
+> the groove. Absolute position frames are written into the signal by the
+> encoder and can be recovered bit-by-bit with
+> `mixi_cut.encoder.decode_position_bits`, but no shipping decoder yet
+> performs frame-level acquisition from audio. The format below is what
+> any new decoder should target.
 
-Every 2800 carrier cycles (0.933 seconds), a 56-bit position frame is modulated:
+### Frame format (v0.3)
+
+Every 4250 carrier cycles (~1.417 s at 33⅓ RPM), an 85-bit position frame
+is modulated. Bits are laid down one per 50 carrier cycles:
 
 ```
-[24-bit position (centiseconds)] [32-bit Reed-Solomon parity]
- = 3 bytes data + 4 bytes RS(4) = 7 bytes = 56 bits
+[13-bit Barker-13 sync] [24-bit position (cs)] [16-bit CRC-16] [32-bit RS parity]
+     = 13 sync bits + 3 data + 2 CRC + 4 RS bytes * 8 = 85 bits
 ```
+
+On the inner groove (position > 300 s) frames are laid at double density
+(every 2100 cycles, snapped to the 50-cycle lattice) for better SNR.
 
 ### Missing cycle modulation
 
@@ -198,14 +215,32 @@ Every 2800 carrier cycles (0.933 seconds), a 56-bit position frame is modulated:
 
 ### Detecting bits
 
-1. Compute the envelope of the carrier signal over consecutive cycles
+1. Compute the envelope of the carrier signal over consecutive cycles.
 2. Every 50 carrier cycles, compare the amplitude:
-   - If amplitude < 60% of mean → bit is `1`
+   - Amplitude < 60% of the local mean → bit is `1`
    - Otherwise → bit is `0`
+3. Slide a 13-bit Barker correlator over the bitstream to find frame
+   boundaries (peak correlation ≥ 11/13 is a strong hit).
+4. Strip the sync word, extract the 9 payload bytes, verify CRC-16, then
+   RS(4) syndromes.
+
+### Barker-13 sync word
+
+Sequence: `[1 1 1 1 1 0 0 1 1 0 1 0 1]`. Autocorrelation sidelobes are
+≤ 1/13, which survives the noise and dropouts typical of lathe-cut vinyl.
+
+### CRC-16 fast-reject
+
+Polynomial `0x8005`, init `0xFFFF`, no reflection, no final XOR — a
+MIXI-CUT-specific configuration (not a standard named variant). Computed
+over the 3 position bytes. Allows O(1) rejection of corrupted frames
+before running the more expensive Reed-Solomon syndrome check.
 
 ### Reed-Solomon validation
 
-Use GF(2^8) with primitive polynomial 0x11D. Compute 4 syndromes; if all are zero, the frame is valid.
+GF(2^8) with primitive polynomial `0x11D`. Codeword = 3 data + 2 CRC +
+4 parity = 9 bytes. Compute 4 syndromes over the full codeword; if all
+are zero the frame is valid.
 
 ## Reference Implementations
 

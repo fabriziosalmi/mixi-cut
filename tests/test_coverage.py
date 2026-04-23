@@ -9,6 +9,7 @@ import os
 import numpy as np
 import soundfile as sf
 
+from mixi_cut import __version__
 from mixi_cut.generator import generate_timecode, write_wav
 from mixi_cut.verifier import verify_timecode
 
@@ -22,7 +23,7 @@ class TestGeneratorCoverage:
             duration=5.0, verbose=True
         )
         captured = capsys.readouterr()
-        assert "MIXI-CUT v0.3.0" in captured.out
+        assert f"MIXI-CUT v{__version__}" in captured.out
         assert "Duration:" in captured.out
         assert "Frequency:" in captured.out
         assert "Samples:" in captured.out

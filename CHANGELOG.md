@@ -5,6 +5,45 @@ All notable changes to MIXI-CUT will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.3.2] - 2026-04-23
+
+### Fixed
+- **Multi-rate encoder off-grid**: inner-groove frame interval (>300s) was
+  `cycles_per_frame // 2 = 2125`, not a multiple of the 50-cycle bit
+  lattice, so inner-groove bits landed 25 cycles out of phase with the
+  outer-groove grid. Now snapped to the lattice (2100 cycles). Guarantees
+  every bit sits on the same 50-cycle grid regardless of which frame
+  wrote it — prerequisite for any future audio-side frame decoder.
+- **Version strings synchronized across packages**: `src/mixi_cut`,
+  `pyproject.toml`, `decoder_rust/Cargo.toml` all at 0.3.2; the Rust
+  crate was stuck at 0.2.0.
+- **Hardcoded "v0.3.0" removed from generator**: `generator.py` now
+  prints the `__version__` value. Tests read the version from the
+  package instead of asserting a literal.
+
+### Documentation
+- `docs/DECODER_GUIDE.md` and `docs/guide/decoder.md` Position Decoding
+  section rewritten: now documents the v0.3 85-bit frame (Barker-13 +
+  24-bit position + CRC-16 + RS(4)) instead of the stale v0.2 56-bit
+  layout. Added an explicit status note that the current reference
+  decoders expose `position = ∫freq/freq` (a cumulative timer), not
+  audio-side frame acquisition.
+- `gf256.crc16` docstring no longer claims "CRC-16/ARC (USB)" — the
+  MIXI-CUT configuration (poly=0x8005, init=0xFFFF, non-reflected)
+  shares ARC's polynomial but is a project-specific CRC, not a named
+  standard variant. Interop goal is encoder↔decoder only.
+- `docs/.../decoder.md` brake-detection section flagged as describing
+  the v0.2 linear ramp still used by the C and Rust ports; v0.3.1
+  3-regime state machine is Python-only.
+
+### Known limitations (unchanged, documented more honestly)
+- C and Rust decoders remain at v0.2 feature level: single PLL (no
+  dual-PLL handoff), linear brake ramp (no 3-regime state machine).
+- No shipping decoder performs Barker/CRC/RS frame acquisition from
+  audio; position is always the cumulative PLL frequency integral.
+  Bit-level round-trip is covered by `decode_position_bits` and its
+  tests. Audio-side frame decoding is a future (minor-release) item.
+
 ## [0.3.1] - 2026-04-15
 
 ### Fixed
