@@ -20,14 +20,21 @@ pip install -e ".[dev]"
 mixi-cut info
 ```
 
-Expected output:
+Expected output (package version line will track your installed build;
+the protocol version stays at `v0.3.0` until the wire format changes):
 
 ```
-MIXI-CUT v0.3.0
-  Protocol:  v0.3.0
-  Carrier:   3000 Hz stereo quadrature
-  Encoding:  24-bit position, Barker-13 sync, CRC-16 + RS(4)
-  Presets:   dj-12inch, dj-7inch, test-cut, phono, locked-groove
+MIXI-CUT v0.3.x
+Protocol: v0.3.0
+Carrier: 3000 Hz stereo quadrature
+Sample rate: 44100 Hz
+
+Presets:
+  dj-12inch            Full side 12" DJ vinyl (15 min)
+  dj-7inch             Single side 7" (4 min)
+  test-cut             60s test for quick iteration
+  phono                Full side with RIAA pre-emphasis
+  locked-groove        Single revolution locked groove
 ```
 
 ## Requirements

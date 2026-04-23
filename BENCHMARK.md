@@ -1,8 +1,16 @@
-# MIXI-CUT Benchmark Report v0.2
+# MIXI-CUT Benchmark Report
 
-Generated: 2026-04-09
-Protocol: MIXI-CUT v0.2 (3 kHz stereo quadrature)
-Decoder: Python port of mixi-core PLL + mass-spring (with v0.2 DJ resilience)
+> **Archived snapshot** — captured 2026-04-09 on the v0.2-era decoder.
+> Numbers below pre-date the v0.3.1 dual-PLL handoff and 3-regime brake
+> in the Python reference decoder, so the published "max_speed 2.0x" and
+> brake-settle figures understate current performance. Re-run
+> `python benchmark.py` (or `mixi-cut bench`) against the current code
+> to refresh; CHANGELOG v0.3.1 records the post-upgrade deltas
+> (e.g. 2.0x → 3.0x speed range, 488 ms → <100 ms brake settle).
+
+Generated: 2026-04-09 (v0.2-era run)
+Protocol: MIXI-CUT v0.3 (3 kHz stereo quadrature, wire format unchanged since v0.3.0)
+Decoder: Python reference (v0.2 DJ resilience at time of capture)
 Target: EDM 100-200 BPM
 
 ## Health Score: 93%

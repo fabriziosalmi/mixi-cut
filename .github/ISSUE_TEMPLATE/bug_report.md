@@ -21,7 +21,7 @@ What you expected to happen.
 ## Environment
 - OS: [e.g., macOS 15, Ubuntu 24.04]
 - Python version: [e.g., 3.12]
-- MIXI-CUT version: [e.g., 0.2.0]
+- MIXI-CUT version: [output of `mixi-cut info`, e.g., 0.3.2]
 - Install method: [pip / source]
 
 ## Command output
