@@ -59,6 +59,34 @@
   }
 }
 
+/* Metallic shimmer sweep across the title — left → right, every ~5s,
+   elegantly fast. Uses a bright peak stacked on top of the base gradient,
+   both clipped to the text via background-clip: text. */
+.VPHero .name .clip {
+  background:
+    linear-gradient(
+      110deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.92) 48%,
+      rgba(255, 255, 255, 0.35) 52%,
+      transparent 66%
+    ),
+    var(--vp-home-hero-name-background, linear-gradient(135deg, #1d1d1f 0%, #424245 50%, #6e6e73 100%));
+  background-size: 260% 100%, 100% 100%;
+  background-position: -120% 0, 0 0;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  color: transparent !important;
+  animation: metallic-sweep 5.2s cubic-bezier(0.6, 0.05, 0.35, 0.95) infinite;
+  animation-delay: 1.1s; /* wait for crumble-in to finish */
+}
+
+@keyframes metallic-sweep {
+  0%, 62%  { background-position: -120% 0, 0 0; }   /* parked off-left */
+  90%, 100% { background-position: 220% 0, 0 0; }   /* swept past on the right */
+}
+
 .VPHero .tagline {
   font-size: 20px !important;
   font-weight: 400 !important;
@@ -71,6 +99,48 @@
   font-size: 18px !important;
   line-height: 1.6 !important;
   color: var(--vp-c-text-2) !important;
+}
+
+/* Crumble-in: each character of name/text/tagline fades in from a blurred,
+   slightly-offset state. Delays are set inline per-span by index.mjs. */
+.VPHero .name .clip .char,
+.VPHero .text .char,
+.VPHero .tagline .char {
+  display: inline-block;
+  opacity: 0;
+  filter: blur(6px);
+  transform: translateY(-4px) scale(0.94);
+  animation: crumble-in 520ms cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
+}
+
+/* Title chars keep the gradient fill — transparent color + background-clip
+   lives on the parent .clip, so the gradient reads continuously across
+   all characters. Spans just modulate opacity + transform. */
+.VPHero .name .clip .char {
+  color: transparent;
+}
+
+@keyframes crumble-in {
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .VPHero .name .clip {
+    animation: none;
+    background-position: 0 0, 0 0;
+  }
+  .VPHero .name .clip .char,
+  .VPHero .text .char,
+  .VPHero .tagline .char {
+    opacity: 1;
+    filter: none;
+    transform: none;
+    animation: none;
+  }
 }
 
 /* Action buttons — pill shape like Apple */

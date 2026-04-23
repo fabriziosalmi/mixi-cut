@@ -48,15 +48,19 @@ features:
   border-radius: 12px;
 }
 
+/* Kill VitePress default hero image blob — our vinyl has its own halo */
+.VPHero .image-bg { display: none !important; }
+
 /* Hero vinyl — spins like a 33⅓ RPM disc (slowed 3× for taste),
-   pauses + pops on hover, respects reduced-motion. */
+   pauses + pops on hover, respects reduced-motion.
+   Halo is pure black so it blends into the image's black rim. */
 .VPHero .VPImage,
 .VPHero .image-src {
   border-radius: 50%;
   box-shadow:
-    0 20px 60px rgba(0, 0, 0, 0.35),
-    0 0 0 2px rgba(0, 0, 0, 0.6),
-    0 0 80px rgba(100, 200, 255, 0.15);
+    0 0 0 2px #000,
+    0 0 60px 18px rgba(0, 0, 0, 0.88),
+    0 30px 80px rgba(0, 0, 0, 0.55);
   animation: mixicut-spin 5.4s linear infinite;
   transform-origin: 50% 50%;
   will-change: transform;
@@ -70,9 +74,9 @@ features:
   animation-play-state: paused;
   transform: scale(1.06) rotate(-6deg);
   box-shadow:
-    0 28px 80px rgba(0, 0, 0, 0.45),
-    0 0 0 2px rgba(0, 0, 0, 0.8),
-    0 0 120px rgba(255, 180, 50, 0.35);
+    0 0 0 2px #000,
+    0 0 80px 28px rgba(0, 0, 0, 0.95),
+    0 36px 100px rgba(0, 0, 0, 0.7);
 }
 
 .VPHero .VPImage:active,
@@ -80,24 +84,6 @@ features:
   cursor: grabbing;
   transform: scale(0.98) rotate(2deg);
   transition-duration: 0.08s;
-}
-
-/* Subtle rim highlight — half-depth platter look */
-.VPHero .image-container {
-  position: relative;
-}
-.VPHero .image-container::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  pointer-events: none;
-  background: radial-gradient(
-    circle at 30% 30%,
-    rgba(255, 255, 255, 0.12) 0%,
-    transparent 40%
-  );
-  mix-blend-mode: screen;
 }
 
 @keyframes mixicut-spin {
