@@ -5,6 +5,9 @@ hero:
   name: "MIXI-CUT"
   text: "Open-source DVS timecode for vinyl."
   tagline: "Generate. Decode. Cut. The timecode protocol designed for lathe-cut vinyl --- from protocol to platter."
+  image:
+    src: /mixi-cut.png
+    alt: "Stylus cutting a vinyl — SCREEECH!!"
   actions:
     - theme: brand
       text: Get Started
@@ -43,6 +46,75 @@ features:
 <style>
 .vp-doc .custom-block {
   border-radius: 12px;
+}
+
+/* Hero vinyl — spins like a 33⅓ RPM disc (slowed 3× for taste),
+   pauses + pops on hover, respects reduced-motion. */
+.VPHero .VPImage,
+.VPHero .image-src {
+  border-radius: 50%;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.35),
+    0 0 0 2px rgba(0, 0, 0, 0.6),
+    0 0 80px rgba(100, 200, 255, 0.15);
+  animation: mixicut-spin 5.4s linear infinite;
+  transform-origin: 50% 50%;
+  will-change: transform;
+  transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.2),
+              box-shadow 0.4s ease;
+  cursor: grab;
+}
+
+.VPHero .VPImage:hover,
+.VPHero .image-src:hover {
+  animation-play-state: paused;
+  transform: scale(1.06) rotate(-6deg);
+  box-shadow:
+    0 28px 80px rgba(0, 0, 0, 0.45),
+    0 0 0 2px rgba(0, 0, 0, 0.8),
+    0 0 120px rgba(255, 180, 50, 0.35);
+}
+
+.VPHero .VPImage:active,
+.VPHero .image-src:active {
+  cursor: grabbing;
+  transform: scale(0.98) rotate(2deg);
+  transition-duration: 0.08s;
+}
+
+/* Subtle rim highlight — half-depth platter look */
+.VPHero .image-container {
+  position: relative;
+}
+.VPHero .image-container::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(255, 255, 255, 0.12) 0%,
+    transparent 40%
+  );
+  mix-blend-mode: screen;
+}
+
+@keyframes mixicut-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Accessibility: no spin for users who opt out */
+@media (prefers-reduced-motion: reduce) {
+  .VPHero .VPImage,
+  .VPHero .image-src {
+    animation: none;
+  }
+  .VPHero .VPImage:hover,
+  .VPHero .image-src:hover {
+    transform: none;
+  }
 }
 
 /* Stats section */
