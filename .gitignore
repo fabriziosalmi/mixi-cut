@@ -36,3 +36,6 @@ decoder_rust/Cargo.lock
 node_modules/
 docs/.vitepress/cache/
 docs/.vitepress/dist/
+
+# Workspace settings
+.claude/
