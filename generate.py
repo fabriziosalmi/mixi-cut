@@ -23,9 +23,9 @@ Usage:
 
 import argparse
 import sys
+
 import numpy as np
 import soundfile as sf
-
 
 # ── Constants ─────────────────────────────────────────────────
 
@@ -283,7 +283,7 @@ def generate_timecode(duration, freq, sr, amplitude, apply_riaa=False, loop=Fals
 
     total_samples = lead_in + signal_samples + lead_out
 
-    print(f"MIXI-CUT v2 (EDM-optimized) timecode generator")
+    print("MIXI-CUT v2 (EDM-optimized) timecode generator")
     print(f"  Duration:    {duration}s ({duration/60:.1f} min) + {LEAD_IN_SECONDS}s lead-in + {LEAD_OUT_SECONDS}s lead-out")
     print(f"  Frequency:   {freq} Hz (stereo quadrature)")
     print(f"  Samples:     {total_samples:,} ({signal_samples:,} signal)")
@@ -459,7 +459,7 @@ def verify_timecode(filepath):
     if abs(corr) < 0.05:
         print("  PASS: Quadrature phase OK")
     else:
-        print(f"  WARN: Quadrature may be off (expected ~0)")
+        print("  WARN: Quadrature may be off (expected ~0)")
 
     # Dominant frequency via FFT
     segment = sig_left[mid:mid + sr]
@@ -469,7 +469,7 @@ def verify_timecode(filepath):
     print(f"  Dominant freq: {peak_freq:.0f} Hz")
 
     if abs(peak_freq - DEFAULT_FREQ) < 100:
-        print(f"  PASS: Carrier frequency OK")
+        print("  PASS: Carrier frequency OK")
     else:
         print(f"  WARN: Expected ~{DEFAULT_FREQ} Hz, got {peak_freq:.0f} Hz")
 
@@ -496,7 +496,7 @@ def verify_timecode(filepath):
         print("  WARN: Channel imbalance detected")
 
     # EDM readiness score
-    print(f"\n  --- EDM Readiness ---")
+    print("\n  --- EDM Readiness ---")
     score = 0
     checks = 0
 
@@ -613,9 +613,9 @@ def main():
 
     file_size_mb = len(left) * 2 * 2 / (1024 * 1024)
     print(f"  File size: ~{file_size_mb:.1f} MB")
-    print(f"  Format:    44100 Hz / 16-bit / stereo")
-    print(f"\nCut at 33 1/3 RPM, 200 lines/inch, +3 dB level.")
-    print(f"For first test: python generate.py --edm-test")
+    print("  Format:    44100 Hz / 16-bit / stereo")
+    print("\nCut at 33 1/3 RPM, 200 lines/inch, +3 dB level.")
+    print("For first test: python generate.py --edm-test")
 
 
 if __name__ == "__main__":
