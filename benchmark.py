@@ -13,10 +13,14 @@ Usage:
     python benchmark.py --history           # Show all historical runs
 """
 
-import argparse, time, sys, os, json, hashlib
+import argparse
+import json
+import os
+import sys
+import time
+from dataclasses import asdict, dataclass
 from datetime import datetime
-from dataclasses import dataclass, field, asdict
-from typing import List, Optional, Tuple, Dict
+
 import numpy as np
 
 # ── ANSI Colors ──────────────────────────────────────────────
@@ -896,7 +900,7 @@ def cat_tonearm_bounce():
     mean_lock = np.mean(locks)
     success_rate = (n_monte - failed) / n_monte * 100
 
-    print(f"      Recovery time:")
+    print("      Recovery time:")
     print(gauge("P50 (median)", p50, "ms", 0, 500, invert=True))
     print(gauge("P95", p95, "ms", 0, 1000, invert=True))
     print(gauge("P99 (worst 1%)", p99, "ms", 0, 2000, invert=True))
@@ -1081,8 +1085,8 @@ def show_history():
 
 def generate_pdf(findings, freq_results=None):
     try:
-        from fpdf import FPDF
         import matplotlib
+        from fpdf import FPDF
         matplotlib.use('Agg')
         import matplotlib.pyplot as plt
     except ImportError:
@@ -1257,7 +1261,7 @@ def main():
 
     # Full suite
     print(f"\n{C.BOLD}{C.MAGENTA}╔══════════════════════════════════════════════════════════╗")
-    print(f"║       MIXI-CUT PROTOCOL STRESS TEST v3                 ║")
+    print("║       MIXI-CUT PROTOCOL STRESS TEST v3                 ║")
     print(f"║       Draconian • EDM 100-200 BPM • {CARRIER:.0f} Hz          ║")
     print(f"╚══════════════════════════════════════════════════════════╝{C.RESET}")
 
