@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MIXI-CUT — Live Timecode Decoder</title>
-    <meta name="description" content="Open-source DVS timecode decoder — drag a WAV file to decode position, speed, and lock quality in real-time.">
+    <title>MIXI-CUT — Live Timecode Decoder & DVS</title>
+    <meta name="description" content="Open-source DVS timecode decoder — decode a WAV file or feed your turntable live and drive a track with the vinyl, in the browser.">
     <link rel="stylesheet" href="fonts/fonts.css">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -15,12 +15,12 @@
             <div class="logo">
                 <span class="logo-icon">◉</span>
                 <h1>MIXI-CUT</h1>
-                <span class="version">v0.2.0</span>
+                <span class="version">v0.3</span>
             </div>
-            <p class="subtitle">Open-Source DVS Timecode Decoder</p>
+            <p class="subtitle">Open-Source DVS Timecode Decoder &amp; Live Vinyl Engine</p>
         </header>
 
-        <!-- Drop zone -->
+        <!-- Source selection / drop zone -->
         <div id="drop-zone" class="drop-zone">
             <div class="drop-content">
                 <div class="drop-icon">
@@ -29,15 +29,22 @@
                         <path d="M8 12l4 4 4-4M12 8v8"/>
                     </svg>
                 </div>
-                <h2>Drop WAV File Here</h2>
-                <p>Or click to select a MIXI-CUT timecode file</p>
-                <input type="file" id="file-input" accept=".wav" hidden>
+                <h2>Drop a MIXI-CUT timecode here</h2>
+                <p>Click to select a <b>lossless</b> file (WAV / FLAC / AIFF) to analyze</p>
+                <input type="file" id="file-input" accept=".wav,.flac,.aif,.aiff" hidden>
+
+                <div class="source-divider"><span>or</span></div>
+
+                <button id="btn-live" class="btn btn-primary btn-live">
+                    🎚 Live input — feed your turntable
+                </button>
+                <p class="drop-hint">Cut a MIXI-CUT timecode to vinyl, plug a <b>stereo line-in</b> into this machine, and the deck below follows the record.</p>
             </div>
         </div>
 
         <!-- Dashboard -->
         <div id="dashboard" class="dashboard hidden">
-            <!-- File info -->
+            <!-- Status bar -->
             <div class="file-info" id="file-info"></div>
 
             <!-- Main gauges -->
@@ -75,8 +82,8 @@
                 <canvas id="graph-canvas" width="1200" height="300"></canvas>
             </div>
 
-            <!-- Controls -->
-            <div class="controls">
+            <!-- File mode controls -->
+            <div class="controls" id="file-controls">
                 <button id="btn-play" class="btn btn-primary" disabled>
                     <span class="btn-icon">▶</span> Play
                 </button>
@@ -87,6 +94,44 @@
                     <span class="btn-icon">↻</span> New File
                 </button>
                 <div class="playback-time" id="playback-time">0:00 / 0:00</div>
+            </div>
+
+            <!-- Live mode controls -->
+            <div class="controls live-controls hidden" id="live-controls">
+                <button id="btn-mic" class="btn btn-primary">
+                    <span class="btn-icon">●</span> Start input
+                </button>
+                <button id="btn-mic-stop" class="btn btn-secondary" disabled>
+                    <span class="btn-icon">■</span> Stop input
+                </button>
+                <div class="input-meter" title="input level">
+                    <div class="input-meter-fill" id="input-meter-fill"></div>
+                </div>
+                <button id="btn-live-back" class="btn btn-ghost">
+                    <span class="btn-icon">↻</span> Back
+                </button>
+            </div>
+
+            <!-- DVS deck (live mode) -->
+            <div class="deck hidden" id="deck">
+                <div class="deck-head">
+                    <span class="deck-title">🎵 DECK — track driven by the vinyl</span>
+                    <span class="deck-status" id="deck-status">no track loaded</span>
+                </div>
+                <div class="deck-row">
+                    <button id="btn-deck-load" class="btn btn-secondary">Load track…</button>
+                    <input type="file" id="deck-input" accept="audio/*" hidden>
+                    <button id="btn-deck-cue" class="btn btn-ghost" disabled>⤒ Cue to start</button>
+                    <label class="deck-toggle">
+                        <input type="checkbox" id="deck-motor" checked>
+                        <span>Vinyl drives deck (DVS)</span>
+                    </label>
+                    <label class="deck-vol">
+                        Monitor
+                        <input type="range" id="deck-vol" min="0" max="100" value="85">
+                    </label>
+                </div>
+                <div class="deck-progress"><div class="deck-progress-fill" id="deck-progress-fill"></div></div>
             </div>
 
             <!-- Protocol info -->
@@ -100,8 +145,8 @@
                     <span class="info-value">L=sin R=cos</span>
                 </div>
                 <div class="info-item">
-                    <span class="info-label">Position</span>
-                    <span class="info-value">24-bit + RS(4)</span>
+                    <span class="info-label">Mode</span>
+                    <span class="info-value" id="info-mode">—</span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">Pipeline</span>

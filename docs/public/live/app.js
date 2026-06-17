@@ -179,6 +179,17 @@ const app = {
         this.setupDropZone();
         this.setupControls();
         this.setupTabs();
+        live.init();
+        document.getElementById('btn-live').addEventListener('click', () => live.enter());
+    },
+
+    setMode(mode) {
+        // mode: 'file' | 'live'
+        document.getElementById('file-controls').classList.toggle('hidden', mode !== 'file');
+        document.getElementById('live-controls').classList.toggle('hidden', mode !== 'live');
+        document.getElementById('deck').classList.toggle('hidden', mode !== 'live');
+        document.getElementById('info-mode').textContent =
+            mode === 'live' ? 'LIVE / DVS rel.' : '24-bit + RS(4)';
     },
 
     setupDropZone() {
@@ -214,8 +225,12 @@ const app = {
     },
 
     async loadFile(file) {
-        if (!file.name.endsWith('.wav')) {
-            alert('Please select a .wav file');
+        // Timecode must be lossless: MP3/AAC/OGG joint-stereo perceptual coding
+        // wrecks the L=sin / R=cos quadrature the decoder locks onto.
+        if (!/\.(wav|flac|aif|aiff)$/i.test(file.name)) {
+            alert('Use a lossless file (WAV / FLAC / AIFF).\n\n' +
+                  'Lossy formats (MP3, AAC, OGG…) destroy the L/R quadrature ' +
+                  'phase of the 3 kHz timecode — the decoder will not lock.');
             return;
         }
 
@@ -235,7 +250,8 @@ const app = {
         // Decode entire file
         this.decodeFile();
 
-        // Show dashboard
+        // Show dashboard (file mode)
+        this.setMode('file');
         document.getElementById('drop-zone').classList.add('hidden');
         document.getElementById('dashboard').classList.remove('hidden');
         document.getElementById('btn-play').disabled = false;
@@ -458,6 +474,225 @@ const app = {
         document.getElementById('drop-zone').classList.remove('hidden');
         document.getElementById('dashboard').classList.add('hidden');
     }
+};
+
+// ── Live input + DVS deck ───────────────────────────────────
+//
+// Real-time decode of a turntable feed: stereo line-in → ScriptProcessor
+// runs the same Bandpass→PLL→MassSpring pipeline block by block. The decoded
+// signed speed drives a fractional read-pointer into an uploaded track buffer
+// (relative DVS), so moving/scratching the vinyl moves the track — including
+// reverse and pitch. Browser DSP (AGC/echo/noise) MUST be off or the timecode
+// is destroyed.
+
+const LIVE_LOCK_GATE = 0.12;   // below this lock, freeze the deck (needle lifted / noise)
+const LIVE_BLOCK = 64;         // decode granularity within each audio callback (~1.5 ms)
+
+const live = {
+    ctx: null,
+    stream: null,
+    micNode: null,
+    proc: null,
+    monitorGain: null,
+    decoder: null,
+    running: false,
+
+    // deck (track driven by the vinyl)
+    deckL: null,
+    deckR: null,
+    deckLen: 0,
+    deckPos: 0,
+    motor: true,
+
+    // shared state written on the audio thread, read by the UI loop
+    latest: { speed: 0, lock: 0 },
+    inLevel: 0,
+    stereoWarned: false,
+    raf: null,
+
+    init() {
+        document.getElementById('btn-mic').addEventListener('click', () => this.startInput());
+        document.getElementById('btn-mic-stop').addEventListener('click', () => this.stopInput());
+        document.getElementById('btn-live-back').addEventListener('click', () => this.leave());
+        document.getElementById('btn-deck-load').addEventListener('click', () =>
+            document.getElementById('deck-input').click());
+        document.getElementById('deck-input').addEventListener('change', e => {
+            if (e.target.files.length) this.loadDeck(e.target.files[0]);
+        });
+        document.getElementById('btn-deck-cue').addEventListener('click', () => { this.deckPos = 0; });
+        document.getElementById('deck-motor').addEventListener('change', e => {
+            this.motor = e.target.checked;
+        });
+        document.getElementById('deck-vol').addEventListener('input', e => {
+            if (this.monitorGain) this.monitorGain.gain.value = e.target.value / 100;
+        });
+    },
+
+    enter() {
+        app.setMode('live');
+        document.getElementById('drop-zone').classList.add('hidden');
+        document.getElementById('dashboard').classList.remove('hidden');
+        document.getElementById('file-info').innerHTML =
+            '🎚 <b>Live mode</b> — press <b>Start input</b> and grant mic/line-in access, ' +
+            'then load a track. Use a <b>stereo</b> line-in with a phono pre (or cut the ' +
+            '<code>phono</code> preset and go direct).';
+    },
+
+    leave() {
+        this.stopInput();
+        document.getElementById('dashboard').classList.add('hidden');
+        document.getElementById('drop-zone').classList.remove('hidden');
+    },
+
+    async startInput() {
+        if (this.running) return;
+        try {
+            this.stream = await navigator.mediaDevices.getUserMedia({
+                audio: {
+                    echoCancellation: false,
+                    noiseSuppression: false,
+                    autoGainControl: false,
+                    channelCount: 2,
+                    sampleRate: SR,
+                },
+                video: false,
+            });
+        } catch (err) {
+            alert('Could not open audio input: ' + err.message +
+                  '\n\nNeeds HTTPS (or localhost) and a granted line-in.');
+            return;
+        }
+
+        this.ctx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: SR });
+        if (this.ctx.state === 'suspended') await this.ctx.resume();
+
+        this.decoder = new Decoder(CARRIER, this.ctx.sampleRate);
+        this.micNode = this.ctx.createMediaStreamSource(this.stream);
+        this.proc = this.ctx.createScriptProcessor(2048, 2, 2);
+        this.monitorGain = this.ctx.createGain();
+        this.monitorGain.gain.value = document.getElementById('deck-vol').value / 100;
+
+        this.proc.onaudioprocess = e => this.process(e);
+
+        this.micNode.connect(this.proc);
+        this.proc.connect(this.monitorGain);
+        this.monitorGain.connect(this.ctx.destination);
+
+        // reset histories so the graph starts clean
+        app.speedHistory = [];
+        app.lockHistory = [];
+        app.results = [];
+
+        this.running = true;
+        this.stereoWarned = false;
+        document.getElementById('btn-mic').disabled = true;
+        document.getElementById('btn-mic-stop').disabled = false;
+        document.getElementById('file-info').innerHTML =
+            `🟢 <b>Listening</b> — ${this.ctx.sampleRate} Hz. Drop the needle on the timecode.`;
+
+        this.loopUI();
+    },
+
+    stopInput() {
+        this.running = false;
+        if (this.raf) cancelAnimationFrame(this.raf);
+        if (this.proc) { try { this.proc.disconnect(); } catch (_) {} this.proc.onaudioprocess = null; this.proc = null; }
+        if (this.micNode) { try { this.micNode.disconnect(); } catch (_) {} this.micNode = null; }
+        if (this.monitorGain) { try { this.monitorGain.disconnect(); } catch (_) {} this.monitorGain = null; }
+        if (this.stream) { this.stream.getTracks().forEach(t => t.stop()); this.stream = null; }
+        if (this.ctx) { this.ctx.close(); this.ctx = null; }
+        document.getElementById('btn-mic').disabled = false;
+        document.getElementById('btn-mic-stop').disabled = true;
+    },
+
+    async loadDeck(file) {
+        const tmpCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: SR });
+        const buf = await tmpCtx.decodeAudioData(await file.arrayBuffer());
+        this.deckL = buf.getChannelData(0);
+        this.deckR = buf.numberOfChannels > 1 ? buf.getChannelData(1) : this.deckL;
+        this.deckLen = buf.length;
+        this.deckPos = 0;
+        tmpCtx.close();
+        const dur = buf.duration;
+        document.getElementById('deck-status').textContent =
+            `${file.name} — ${Math.floor(dur / 60)}:${String(Math.floor(dur % 60)).padStart(2, '0')}`;
+        document.getElementById('btn-deck-cue').disabled = false;
+    },
+
+    // sampleRate of deck == ctx SR, so speed 1.0 advances exactly 1 sample/sample
+    sampleDeck(ch, pos) {
+        const i = Math.floor(pos);
+        if (i < 0 || i + 1 >= this.deckLen) return 0;
+        const f = pos - i;
+        return ch[i] * (1 - f) + ch[i + 1] * f;
+    },
+
+    process(e) {
+        const inL = e.inputBuffer.getChannelData(0);
+        const inR = e.inputBuffer.numberOfChannels > 1
+            ? e.inputBuffer.getChannelData(1) : inL;
+        const outL = e.outputBuffer.getChannelData(0);
+        const outR = e.outputBuffer.getChannelData(1);
+        const n = inL.length;
+
+        let level = 0, diff = 0;
+        let o = 0;
+        const haveDeck = this.deckL && this.deckLen > 0;
+
+        for (let i = 0; i < n; i += LIVE_BLOCK) {
+            const end = Math.min(i + LIVE_BLOCK, n);
+            const r = this.decoder.process(inL.subarray(i, end), inR.subarray(i, end));
+            this.latest = r;
+
+            const gated = r.lock > LIVE_LOCK_GATE ? r.speed : 0;
+            const step = this.motor ? gated : 1; // motor off = straight 1x playback
+
+            for (let j = i; j < end; j++) {
+                const a = Math.abs(inL[j]);
+                if (a > level) level = a;
+                const d = inL[j] - inR[j];
+                diff += d < 0 ? -d : d;
+
+                let sl = 0, sr = 0;
+                if (haveDeck && (step !== 0)) {
+                    this.deckPos += step;
+                    if (this.deckPos < 0) this.deckPos = 0;
+                    else if (this.deckPos >= this.deckLen - 1) this.deckPos = this.deckLen - 1;
+                    sl = this.sampleDeck(this.deckL, this.deckPos);
+                    sr = this.sampleDeck(this.deckR, this.deckPos);
+                }
+                outL[o] = sl; outR[o] = sr; o++;
+            }
+        }
+        this.inLevel = level;
+        // crude mono detection: L and R essentially identical → not real stereo
+        if (!this.stereoWarned && level > 0.02 && diff / n < 1e-4) {
+            this.stereoWarned = true;
+            document.getElementById('file-info').innerHTML =
+                '⚠️ <b>Input looks MONO</b> — the timecode is L=sin / R=cos quadrature and ' +
+                'needs a true stereo line-in. Decode will not lock.';
+        }
+    },
+
+    loopUI() {
+        if (!this.running) return;
+        const r = this.latest;
+        app.updateGauges({ speed: r.speed, lock: r.lock, position: this.deckPos / SR });
+        app.speedHistory.push(r.speed);
+        app.lockHistory.push(r.lock);
+        if (app.speedHistory.length > 1200) { app.speedHistory.shift(); app.lockHistory.shift(); }
+        app.results.push({ speed: r.speed, lock: r.lock, position: this.deckPos / SR });
+        if (app.results.length > 1200) app.results.shift();
+
+        document.getElementById('input-meter-fill').style.width =
+            Math.min(this.inLevel * 140, 100) + '%';
+        if (this.deckLen > 0) {
+            document.getElementById('deck-progress-fill').style.width =
+                (this.deckPos / this.deckLen * 100) + '%';
+        }
+        app.drawGraph();
+        this.raf = requestAnimationFrame(() => this.loopUI());
+    },
 };
 
 // Boot

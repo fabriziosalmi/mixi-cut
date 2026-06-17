@@ -380,3 +380,109 @@ body {
     .protocol-info { grid-template-columns: repeat(2, 1fr); }
     .gauge-value { font-size: 1.4rem; }
 }
+
+/* ── Live mode: source divider, deck, meters ─────────────── */
+
+.source-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 22px auto 18px;
+    max-width: 360px;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+.source-divider::before, .source-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+}
+
+.btn-live { font-size: 0.95rem; padding: 12px 22px; }
+
+.drop-hint {
+    margin-top: 14px;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    max-width: 460px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.5;
+}
+.drop-hint b { color: var(--text-secondary); }
+
+.live-controls { flex-wrap: wrap; }
+
+.input-meter {
+    flex: 1;
+    min-width: 120px;
+    height: 10px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    overflow: hidden;
+}
+.input-meter-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--accent-green), var(--accent-amber), var(--accent-red));
+    transition: width 0.05s linear;
+}
+
+.deck {
+    margin-top: 16px;
+    padding: 16px 18px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+.deck-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 12px;
+    gap: 12px;
+}
+.deck-title { font-weight: 600; font-size: 0.9rem; }
+.deck-status {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.deck-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px;
+}
+.deck-toggle, .deck-vol {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+}
+.deck-vol input[type="range"] { width: 110px; accent-color: var(--accent-cyan); }
+.deck-toggle input { accent-color: var(--accent-cyan); }
+
+.deck-progress {
+    margin-top: 14px;
+    height: 6px;
+    background: var(--bg-card);
+    border-radius: 999px;
+    overflow: hidden;
+}
+.deck-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--accent-purple);
+    box-shadow: var(--glow-purple);
+    transition: width 0.05s linear;
+}
