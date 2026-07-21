@@ -5,9 +5,8 @@ export default defineConfig({
   description: 'Open-source DVS timecode protocol for vinyl lathe cutting',
   base: '/mixi-cut/',
   head: [
-    ['link', { rel: 'preconnect', href: 'https://fonts.googleapis.com' }],
-    ['link', { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' }],
-    ['link', { href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap', rel: 'stylesheet' }],
+    // Self-hosted fonts (docs/public/fonts) — no request to Google.
+    ['link', { href: '/mixi-cut/fonts/fonts.css', rel: 'stylesheet' }],
     ['meta', { name: 'theme-color', content: '#0a0a0a' }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:title', content: 'MIXI-CUT' }],
