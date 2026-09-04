@@ -4,6 +4,9 @@ export default defineConfig({
   title: 'MIXI-CUT',
   description: 'Open-source DVS timecode protocol for vinyl lathe cutting',
   base: '/mixi-cut/',
+  // The hostname carries the base path on purpose: VitePress joins it with each
+  // page's route, so without it every URL in the sitemap would point at a 404.
+  sitemap: { hostname: 'https://fabriziosalmi.github.io/mixi-cut/' },
   head: [
     // Self-hosted fonts (docs/public/fonts) — no request to Google.
     ['link', { href: '/mixi-cut/fonts/fonts.css', rel: 'stylesheet' }],
